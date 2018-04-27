@@ -7,6 +7,8 @@ $stdout.sync = true
 logger = Logger.new($stdout)
 logger.level = Logger::DEBUG
 
+threads = []
+
 ENV['SLACK_API_TOKENS'].split.each do |token|
   logger.info "Starting #{token[0..12]} ..."
 
@@ -22,9 +24,7 @@ ENV['SLACK_API_TOKENS'].split.each do |token|
     #client.message channel: data.channel, text: "What are you typing <@#{data.user}>?"
   end
 
-  client.start_async
+  threads << client.start_async
 end
 
-loop do
-  Thread.pass
-end
+threads.each(&:join)
